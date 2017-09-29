@@ -1,3 +1,3 @@
 Personal dotfile direcotory.
 
-Use thoughtbot/rcm for easy dotfile management.
+Use [thoughtbot/rcm](https://github.com/thoughtbot/rcm) for easy dotfile management.
