@@ -1,0 +1,47 @@
+Host alioth
+	HostName alioth.ni.tu-berlin.de
+	User denisalevi
+	ForwardX11 yes
+	ForwardX11Trusted no
+
+Host antares
+	HostName antares.ni.tu-berlin.de
+	User denisalevi
+	ForwardX11 yes
+	ForwardX11Trusted no
+
+Host meropetunnel
+	ProxyCommand ssh -q alioth nc -q0 merope 22
+	User denisalevi
+	ForwardX11 yes
+	ForwardX11Trusted no
+
+Host merope
+	HostName merope.ni.tu-berlin.de
+	User denisalevi
+	ForwardX11 yes
+	ForwardX11Trusted no
+
+Host elnath
+	HostName elnath.ni.tu-berlin.de
+	User denisalevi
+	ForwardX11 yes
+	ForwardX11Trusted no
+
+Host elnathtunnel
+	ProxyCommand ssh -q alioth nc -q0 elnath 22
+	User denisalevi
+	ForwardX11 yes
+	ForwardX11Trusted no
+
+Host sabik
+	HostName sabik.ni.tu-berlin.de
+	User denisalevi
+	ForwardX11 yes
+	ForwardX11Trusted no
+
+Host sabiktunnel
+	ProxyCommand ssh -q alioth nc -q0 sabik 22
+	User denisalevi
+	ForwardX11 yes
+	ForwardX11Trusted no
