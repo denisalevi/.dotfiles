@@ -83,7 +83,8 @@ filetype off                  " required
   " Automaticall insert the closing HTML tag
   "Plugin 'HTML-AutoCloseTag'
   " Make tmux look like vim-airline (read README for extra instructions)
-  Plugin 'edkolev/tmuxline.vim'
+  " either this or just install powerline and source in .tmux.conf
+  "Plugin 'edkolev/tmuxline.vim'
   " All the other syntax plugins I use
   "Plugin 'ekalinin/Dockerfile.vim'
   "Plugin 'digitaltoad/vim-jade'
@@ -431,10 +432,10 @@ filetype off                  " required
     autocmd FileType tex                set tabstop=4 shiftwidth=4 textwidth=79 wrap expandtab spell spelllang=en iskeyword+=: tw=0 "linebreak
     "autocmd FileType tex                set makeprg=pdflatex\ \"%\"&&evince\ \"%<.pdf\"
     autocmd FileType vimwiki            set ts=2 sw=2 tw=78 wrap lbr et
-    autocmd FileType vim                set ts=2 sw=2 expandtab
+    autocmd FileType vim,tmux           set ts=2 sw=2 expandtab
     autocmd FileType mail               set tw=72
     autocmd FileType gitcommit          set tw=72 sw=2 tabstop=2 et
-    autocmd FileType sh                 set tw=79 ts=2 tw=2 softtabstop=2 shiftwidth=2 expandtab
+    autocmd FileType sh                 set tw=79 ts=2 softtabstop=2 shiftwidth=2 expandtab
   augroup misc
     au!
     autocmd BufNewFile,BufRead wscript* set filetype=python
