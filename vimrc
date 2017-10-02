@@ -57,18 +57,21 @@ filetype off                  " required
   " TODO do I need the indent vim?
   Plugin 'vim-scripts/indentpython.vim'
   "Plugin 'Vimjas/vim-python-pep8-indent'
+  " For python 3.6 syntax support (not in polyglot syntax repo)
+  Plugin 'vim-python/python-syntax'
   Plugin 'denisalevi/vim-pydocstring'
   " Use either syntastic + flake8 isntalled or vim-flake8
   Plugin 'vim-syntastic/syntastic'
   " TODO: check out w0rp/ale for asynchronous checking
   "Plugin 'nvie/vim-flake8'
-  Plugin 'sheerun/vim-polyglot'
   "Plugin 'file:///home/denisalevi/git/Vim-Jinja2-Syntax-fork'
   Plugin 'denisalevi/Vim-Jinja2-Syntax'
   " Plugin 'niftylettuce/Vim-Jinja2-Syntax'
   Plugin 'rhysd/vim-clang-format'
   " Markers at indent levels
   "Plugin 'nathanaelkane/vim-indent-guides'
+  " Add syntax plugins above polyglot to be loaded first
+  Plugin 'sheerun/vim-polyglot'
 
   " ----- Notes plugins -------------------------------------------------
   Plugin 'xolox/vim-notes'
@@ -142,7 +145,7 @@ filetype off                  " required
   hi clear SignColumn
 
   "Make code pretty
-  " TODO do we need that?
+  " Uncomment if not using vim-python/python-syntax plugin
   "let python_highlight_all = 1
   syntax on
 
@@ -300,6 +303,9 @@ filetype off                  " required
   autocmd BufWinLeave *.py setlocal foldexpr< foldmethod<
   "Show docstring of foled code
   let g:SimpylFold_docstring_preview=1
+
+  " ----- vim-python/python-syntax
+  let g:python_highlight_all = 1
 
 " }}} Plugin-Specific Settings
 
