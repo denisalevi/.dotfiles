@@ -4,7 +4,7 @@ Use [thoughtbot/rcm](https://github.com/thoughtbot/rcm) for easy dotfile managem
 
 Clone into $HOME:
 ```
-git clone git@github.com:denisalevi/.dotfiles.git
+git clone git@github.com:denisalevi/.dotfiles.git $HOME
 ```
 
 Create symlinks for all not host-specific dotfiles in `~/.dotfiles`:
@@ -12,17 +12,17 @@ Create symlinks for all not host-specific dotfiles in `~/.dotfiles`:
 rcup -v
 ```
 
-Create symlink for specific dotfiles (e.g. `.rcrc`):
+Create symlink for specific dotfile `.mydotfile`:
 ```
-rcup -v rcrc
-```
-
-Add already existing dotfile to `~/.dotfiles` directory (eg. `.rcrc`)
-```
-mkrc -v .rcrc
+rcup -v mydotfile
 ```
 
-Add dotfile as host-specific dotfile to `~/dotfiles` directorye:
+Add already existing dotfile `.mydotfile` to `~/.dotfiles` directory:
 ```
-mkrc -o .rcrc
+mkrc -v .mydotfile
+```
+
+Add dotfile `.mydotfile` as host-specific (`-o` flag) dotfile to `~/dotfiles` directorye:
+```
+mkrc -vo .mydotfile
 ```
