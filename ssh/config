@@ -45,3 +45,15 @@ Host sabiktunnel
 	User denisalevi
 	ForwardX11 yes
 	ForwardX11Trusted no
+
+Host eltanin
+	HostName eltanin.ni.tu-berlin.de
+	User denisalevi
+	ForwardX11 yes
+	ForwardX11Trusted no
+
+Host eltanintunnel
+	Proxycommand ssh -q alioth nc -q0 eltanin
+	User denisalevi
+	ForwardX11 yes
+	ForwardX11Trusted no
