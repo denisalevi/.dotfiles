@@ -1,0 +1,3 @@
+# Powerline
+run-shell "powerline-daemen -q"
+source /usr/lib/python3.6/site-packages/powerline/bindings/tmux/powerline.conf
