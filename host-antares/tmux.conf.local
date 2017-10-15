@@ -2,3 +2,5 @@
 run-shell "powerline-daemen -q"
 source ~/.local/lib/python2.7/site-packages/powerline/bindings/tmux/powerline.conf
 
+bind-key R source-file ~/.tmux.conf \; display-message "~/.tmux.conf reloaded.")
+
