@@ -92,6 +92,11 @@ alias la='ls -A'
 alias l='ls -CF'
 alias ldir="ls -l | egrep '^d'"
 
+alias gtop='watch --color -n 1 gpustat --color -cpu'
+alias gtop_slim='watch -t --color -n 1 gpustat --color -cpu'
+alias htop_slim='HTOPRC=~/.config/htop/htoprc.slim htop'
+alias htop_nometers='HTOPRC=~/.config/htop/htoprc.nometers htop'
+
 # Add an "alert" alias for long running commands.  Use like so:
 #   sleep 10; alert
 alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
@@ -145,7 +150,7 @@ export PATH="$PATH:/home/denisalevi/.local/bin"
 export VISUAL=vim
 export EDITOR="$VISUAL"
 
-alias tmux="TERM=screen-256color-bce tmux"
+#alias tmux="TERM=screen-256color-bce tmux"
 
 # fix CURL certificates path
 export CURL_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt
@@ -160,8 +165,12 @@ if [ -f $POWERLINE_SH ]; then
 fi
 
 
-if [ "$HOSTNAME" = elnath ];
-then
-	export LIBRARY_PATH=/usr/local/cuda/lib64:$LIBRARY_PATH;
-	export CPATH=/usr/local/cuda/include:$CPATH;
-fi
+#if [ "$HOSTNAME" = elnath ];
+#then
+#	export LIBRARY_PATH=/usr/local/cuda/lib64:$LIBRARY_PATH;
+#	export CPATH=/usr/local/cuda/include:$CPATH;
+#fi
+
+# set binary, library and include paths for CUDA (host specific)
+. ~/.init_cuda.sh
+#. ~/bash_tf.sh
