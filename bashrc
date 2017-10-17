@@ -131,8 +131,10 @@ alias sync_b2c="rsync -avzhe ssh merope:/home/denisalevi/projects/dev_brian2cuda
 alias sync_b2c_tunnel="rsync -avzhe ssh meropetunnel:/home/denisalevi/projects/dev_brian2cuda/brian2cuda_repo/ ~/projects/dev_brian2cuda/brian2cuda_repo/ --delete --exclude 'benchmarks' --exclude 'brian2cuda/tools' --exclude 'examples'"
 alias sync_tests='rsync -avzhe ssh merope:/home/denisalevi/projects/dev_brian2cuda/python_test_networks/test_brian2_test_suite_tests/*.py ~/projects/dev_brian2cuda/python_test_networks/test_brian2_test_suite_tests/ && rsync -avzhe ssh merope:/home/denisalevi/projects/dev_brian2cuda/python_test_networks/test_feature_tests/*.py ~/projects/dev_brian2cuda/python_test_networks/test_feature_tests/ --delete'
 alias sync_tests_tunnel='rsync -avzhe ssh meropetunnel:/home/denisalevi/projects/dev_brian2cuda/python_test_networks/test_brian2_test_suite_tests/*.py ~/projects/dev_brian2cuda/python_test_networks/test_brian2_test_suite_tests/ && rsync -avzhe ssh meropetunnel:/home/denisalevi/projects/dev_brian2cuda/python_test_networks/test_feature_tests/*.py ~/projects/dev_brian2cuda/python_test_networks/test_feature_tests/ --delete'
-alias grip_tunnel='ssh -N -f -L localhost:6419:localhost:6419 merope'
-alias grip_tunnel_tunnel='ssh -N -f -L localhost:6419:localhost:6419 meropetunnel'
+alias grip_tunnel='ssh -Y -N -f -L localhost:6419:localhost:6419 alioth'
+alias grip_tunnel_kill='grip_pid=$(pgrep -f "ssh -Y -N -f -L localhost:6419:localhost:6419 alioth") \
+                            && if [ ! -z "$grip_pid" ]; then kill -s 9 $grip_pid; fi'
+alias grip_tunnel_reset='grip_tunnel_kill && grip_tunnel'
 
 
 #stty stop undef # to unmap ctrl-s for vim-ipython
