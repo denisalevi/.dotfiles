@@ -53,7 +53,7 @@ Host eltanin
 	ForwardX11Trusted no
 
 Host eltanintunnel
-	Proxycommand ssh -q alioth nc -q0 eltanin
+	Proxycommand ssh -q alioth nc -q0 eltanin 22
 	User denisalevi
 	ForwardX11 yes
 	ForwardX11Trusted no
