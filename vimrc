@@ -490,9 +490,13 @@ filetype off                  " required
   " Toggle relative line numbers
   nmap <silent> <leader>n :call ToggleNumber()<CR>
 
+  " diffput and diffget
+  map <leader>dp :diffput <CR>
+  map <leader>dg :diffget <CR>
+
   " Buffer navigation
   " Close the current buffer and move to the most recently used
-  nmap <leader>d :bd<CR>
+  nmap <leader>dd :bd<CR>
 "  " Buffer navigation
 "  " open buffer list for selection
 "  nnoremap <leader>b :ls<CR>:b<Space>
@@ -557,6 +561,9 @@ filetype off                  " required
   noremap <silent> $ g$
   noremap <silent> ^ g^
   noremap <silent> _ g_
+
+  " linediff
+  vmap <leader>l :Linediff<CR>
 
 " }}} Keyboard mappings
 
