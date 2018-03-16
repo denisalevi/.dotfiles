@@ -71,6 +71,10 @@ filetype off                  " required
   "Plugin 'nathanaelkane/vim-indent-guides'
   " Add syntax plugins above polyglot to be loaded first
   Plugin 'sheerun/vim-polyglot'
+  " latex support
+  Plugin 'vim-latex/vim-latex'
+  " json highlighting and folding (already in polyglot)
+  "Plugin 'elzr/vim-json'
 
   " ----- man pages, tmux -----------------------------------------------
   Plugin 'jez/vim-superman'
@@ -418,6 +422,45 @@ filetype off                  " required
   " turn of autmatic diff preview (manual with r)
   let g:gundo_auto_preview = 0
 
+  " ---- vim-latex/vim-latex -----
+  "  " Default compiling format
+  let g:Tex_DefaultTargetFormat='pdf'
+
+  " Never Forget, To set the default viewer:: Very Important
+  let g:Tex_ViewRule_pdf = 'zathura'
+
+  " Trying to add same for pdfs, hoping that package SynTex is installed
+  "let g:Tex_CompileRule_dvi = 'latex -src-specials -interaction=nonstopmode $*'
+  let g:Tex_CompileRule_pdf = 'pdflatex -synctex=1 -interaction=nonstopmode $*'
+
+  " Get the correct servername, which should be the filename of the tex file,
+  " without the extension.
+  " Using the filename, without the extension, not in uppercase though, but
+  " that's okay for a servername, it automatically get uppercased
+  let theuniqueserv = expand("%:r")
+
+  " Working!!!, when we run vim appropriately
+  let g:Tex_ViewRuleComplete_pdf = 'zathura -x "vim --servername '.theuniqueserv.' --remote +\%{line} \%{input}" $*.pdf 2>/dev/null &'
+
+  " Forward search
+  " syntax for zathura: zathura --synctex-forward 193:1:paper.tex paper.pdf
+  function! SyncTexForward()
+          let execstr = 'silent! !zathura --synctex-forward '.line('.').':1:"'.expand('%').'" "'.expand("%:p:r").'".pdf'
+          execute execstr
+  endfunction
+  nmap <leader>lf :call SyncTexForward()<CR>
+
+  let g:Tex_IgnoredWarnings =
+  \'Underfull'."\n".
+  \'Overfull'."\n".
+  \'specifier changed to'."\n".
+  \'You have requested'."\n".
+  \'Missing number, treated as zero.'."\n".
+  \'There were undefined references'."\n".
+  \'Latex Warning:'."\n".
+  \'Citation %.%# undefined'
+  let g:Tex_IgnoreLevel = 8
+
 " }}} Plugin-Specific Settings
 
 " ----- Keyboard Mappings {{{
@@ -596,7 +639,7 @@ filetype off                  " required
     autocmd FileType make               set tabstop=8 shiftwidth=8 noexpandtab list
     autocmd FileType man                set tabstop=8 shiftwidth=8 noexpandtab
     autocmd FileType c,cpp,cuda         set tabstop=4 shiftwidth=4 softtabstop=4 textwidth=79 expandtab nolist
-    autocmd FileType tex                set tabstop=4 shiftwidth=4 textwidth=79 wrap expandtab spell spelllang=en iskeyword+=: tw=0 "linebreak
+    autocmd FileType tex                set tabstop=2 shiftwidth=2 textwidth=79 wrap expandtab spell spelllang=en iskeyword+=: "linebreak
     "autocmd FileType tex                set makeprg=pdflatex\ \"%\"&&evince\ \"%<.pdf\"
     autocmd FileType vimwiki            set ts=2 sw=2 tw=78 wrap lbr et
     autocmd FileType vim,tmux           set ts=2 sw=2 expandtab
