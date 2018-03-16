@@ -30,9 +30,12 @@ filetype off                  " required
   " Toggle line commenting
   Plugin 'scrooloose/nerdcommenter'
   Plugin 'xolox/vim-misc'
-  Plugin 'xolox/vim-easytags'
+  "Plugin 'xolox/vim-easytags'
+  Plugin 'ludovicchabant/vim-gutentags'
+  "Plugin 'vim-scripts/TagHighlight'
   Plugin 'majutsushi/tagbar'
   Plugin 'ctrlpvim/ctrlp.vim'
+  Plugin 'jeetsukumaran/vim-buffergator'
   Plugin 'vim-scripts/a.vim'
   " MY STUFF
   " mappings for next / previous mappings
@@ -48,10 +51,6 @@ filetype off                  " required
   " ---- Other stuff without own section --------------------------------
   Plugin 'Raimondi/delimitMate'
   "Plugin 'tomtom/tinykeymap_vim'
-
-  " ----- man pages, tmux -----------------------------------------------
-  Plugin 'jez/vim-superman'
-  Plugin 'christoomey/vim-tmux-navigator'
 
   " ----- Syntax plugins ------------------------------------------------
   " TODO do I need the indent vim?
@@ -72,6 +71,10 @@ filetype off                  " required
   "Plugin 'nathanaelkane/vim-indent-guides'
   " Add syntax plugins above polyglot to be loaded first
   Plugin 'sheerun/vim-polyglot'
+
+  " ----- man pages, tmux -----------------------------------------------
+  Plugin 'jez/vim-superman'
+  Plugin 'christoomey/vim-tmux-navigator'
 
   " ----- Notes plugins -------------------------------------------------
   Plugin 'xolox/vim-notes'
@@ -97,6 +100,8 @@ filetype off                  " required
   " ------ My old stuff --------------------------------------------------
   "DirDiff directory diff
   Plugin 'will133/vim-dirdiff'
+  "Lindiff visual blocks diff
+  Plugin 'AndrewRadev/linediff.vim'
   " Ack from inside vim
   Plugin 'mileszs/ack.vim'
   " TODO autocompletion!
@@ -150,6 +155,7 @@ filetype off                  " required
   syntax on
 
   " *** GENERAL OPTS ***
+  set hidden                              " Make it possible to hide modified buffers
   set modeline                            " last line of file has file specific vim options
   set backspace=indent,eol,start
   set number                              " show line numbering
@@ -173,14 +179,53 @@ filetype off                  " required
   set cursorline                          " highlights active cursor line
   "set t_Co=16                             " proper color themes in terminal mode
   set notitle                             " suppress 'Thanks for flying vim' message
-  set timeoutlen=250                      " less delay after pressing ESC
+  set timeoutlen=1000 ttimeoutlen=10      " less delay after pressing ESC
   set nojoinspaces                        " avoids to 2 spaces after dots when joining lines
   "set foldmethod=syntax                   " code folding
   set breakindent                         " Indent wrapped lines up to the same level
   set foldnestmax=1                       " only fold up to one level deep
 
-  hi clear SpellBad
-  hi SpellBad cterm=bold ctermfg=red
+  " Remember fold states after closing vim
+  set viewoptions-=options                " Don't save window / buffer local opionts
+  augroup AutoSaveFolds
+    autocmd!
+    autocmd BufWinLeave ?* mkview
+    autocmd BufWinEnter ?* silent loadview
+  augroup END
+
+" " OmniComplete
+" if has("autocmd") && exists("+omnifunc")
+"   autocmd Filetype *
+"         \if &omnifunc == "" |
+"         \setlocal omnifunc=syntaxcomplete#Complete |
+"         \endif
+" endif
+"
+" hi Pmenu  guifg=#000000 guibg=#F8F8F8 ctermfg=black ctermbg=Lightgray
+" hi PmenuSbar  guifg=#8A95A7 guibg=#F8F8F8 gui=NONE ctermfg=darkcyan ctermbg=lightgray cterm=NONE
+" hi PmenuThumb  guifg=#F8F8F8 guibg=#8A95A7 gui=NONE ctermfg=lightgray ctermbg=darkcyan cterm=NONE
+"
+" " Some convenient mappings
+" inoremap <expr> <Esc>      pumvisible() ? "\<C-e>" : "\<Esc>"
+" inoremap <expr> <CR>       pumvisible() ? "\<C-y>" : "\<CR>"
+" "inoremap <expr> <Down>     pumvisible() ? "\<C-n>" : "\<Down>"
+" "inoremap <expr> <Up>       pumvisible() ? "\<C-p>" : "\<Up>"
+" "inoremap <expr> <C-d>      pumvisible() ? "\<PageDown>\<C-p>\<C-n>" : "\<C-d>"
+" "inoremap <expr> <C-u>      pumvisible() ? "\<PageUp>\<C-p>\<C-n>" : "\<C-u>"
+"
+" " Automatically open and close the popup menu / preview window
+" au CursorMovedI,InsertLeave * if pumvisible() == 0|silent! pclose|endif
+" set completeopt=menu,preview,longest
+"
+" " Enable omni-completion.
+" autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
+" autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
+" autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
+" autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
+" autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
+" autocmd FileType ruby setlocal omnifunc=rubycomplete#Complete
+" autocmd FileType haskell setlocal omnifunc=necoghc#omnifunc
+
 " }}}
 
 " ----- Plugin-Specific Settings {{{
@@ -195,6 +240,9 @@ filetype off                  " required
   " Not needed when terminal uses 16 Solarized colors
   "let g:solarized_termcolors=256
 
+  " needs to be set after colorscheme (which resets SpellBad)
+  hi clear SpellBad
+  hi SpellBad cterm=bold,underline ctermfg=red
 
   " ----- bling/vim-airline and vim-bufferline settings -----
   " Always show statusbar
@@ -212,17 +260,64 @@ filetype off                  " required
   " Show airline for tabs too
   let g:airline#extensions#tabline#enabled = 1
 
+  " Show just the filename
+  let g:airline#extensions#tabline#fnamemod = ':t'
+
   " Use the solarized theme for the Airline status bar
   let g:airline_theme='solarized'
+  let g:airline#extensions#tabline#show_tabs = 0
   let g:airline#extensions#tabline#show_buffers = 1
 
   " Show numbers in tabline
-  let g:airline#extensions#tabline#tab_nr_type = 1
+  let g:airline#extensions#tabline#buffer_nr_show = 1
 
   " Enable bufferline (not working?)
   "let g:airline#extensions#bufferline#enabled = 1
   "let g:airline#extensions#bufferline#overwrite_variables = 1
 
+
+	" -----  'ctrlpvim/ctrlp.vim' -----
+  " Use the nearest .git directory as the cwd
+  " This makes a lot of sense if you are working on a project that is in
+  " version control. It also supports works with .svn, .hg, .bzr.
+  let g:ctrlp_working_path_mode = 'r'
+	" cache the file indexing
+	let g:ctrlp_cache_dir = $HOME . '/.cache/ctrlp'
+	" use ag (faster)
+	"if executable('ag')
+  "  " Use Ag over Grep
+  "  " Use ag in CtrlP for listing files. Lightning fast and respects
+  "  " .gitignore
+  "  set grepprg=ag\ --nogroup\ --nocolor
+	"	let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
+  "elseif executable('junest')
+	"	let g:ctrlp_user_command = 'junest -u -- ag %s -l --nocolor -g ""'
+	"endif
+  let g:ctrlp_user_command = ['.git/', 'git --git-dir=%s/.git ls-files -oc --exclude-standard']
+	" Setup some default ignores
+	let g:ctrlp_custom_ignore = {
+				\ 'dir':  '\v[\/](\.(git|hg|svn)|\_site)$',
+				\ 'file': '\v\.(exe|so|dll|class|png|jpg|jpeg)$',
+				\}
+
+  " ----- 'jeetsukumaran/vim-buffergator' -----
+  " don't use buffergator key mappings
+  let g:buffergator_suppress_keymaps = 1
+  " my own keybindings (partly copied from buffergator defaults)
+  nnoremap <silent> <Leader>b :BuffergatorOpen<CR>
+  "nnoremap <silent> <Leader>B :BuffergatorClose<CR>
+  nnoremap <silent> <Leader>T :BuffergatorTabsOpen<CR>
+  "nnoremap <silent> <Leader>T :BuffergatorTabsClose<CR>
+  nnoremap <silent> gb :BuffergatorMruCyclePrev<CR>
+  nnoremap <silent> gB :BuffergatorMruCycleNext<CR>
+  nnoremap <silent> <Leader><LEFT> :BuffergatorMruCyclePrev leftabove vert sbuffer<CR>
+  nnoremap <silent> <Leader><UP> :BuffergatorMruCyclePrev leftabove sbuffer<CR>
+  nnoremap <silent> <Leader><RIGHT> :BuffergatorMruCyclePrev rightbelow vert sbuffer<CR>
+  nnoremap <silent> <Leader><DOWN> :BuffergatorMruCyclePrev rightbelow sbuffer<CR>
+  nnoremap <silent> <Leader><S-LEFT> :BuffergatorMruCycleNext leftabove vert sbuffer<CR>
+  nnoremap <silent> <Leader><S-UP> :BuffergatorMruCycleNext leftabove sbuffer<CR>
+  nnoremap <silent> <Leader><S-RIGHT> :BuffergatorMruCycleNext rightbelow vert sbuffer<CR>
+  nnoremap <silent> <Leader><S-DOWN> :BuffergatorMruCycleNext rightbelow sbuffer<CR>
 
   " ----- scrooloose/nerdtree -----
   "hide .pyc files in NERDTree
@@ -254,21 +349,28 @@ filetype off                  " required
   "            \ 'passive_filetypes': [] }
 
 
-  " ----- xolox/vim-easytags settings -----
-  " Where to look for tags files
-  set tags=./tags;,~/.vimtags
-  "TODO set tags=./tags;$HOME (walk directory tree upto $HOME looking for tags)
-  " Sensible defaults
-  let g:easytags_events = ['BufReadPost', 'BufWritePost']
-  let g:easytags_async = 1
-  let g:easytags_dynamic_files = 2
-  let g:easytags_resolve_links = 1
-  let g:easytags_suppress_ctags_warning = 1
+"  " ----- xolox/vim-easytags settings -----
+"  " ./tags uses tag file in current dir instead of current file
+"  set cpoptions+=d
+"  " Where to look for tags files
+"  set tags=./.tags,.tags
+"  "TODO set tags=./tags;$HOME (walk directory tree upto $HOME looking for tags)
+"  " Sensible defaults
+"  let g:easytags_events = ['BufReadPost', 'BufWritePost']
+"  let g:easytags_async = 1
+"  let g:easytags_dynamic_files = 1
+"  let g:easytags_resolve_links = 1
+"  "let g:easytags_auto_highlight = 0
+"  "let g:easytags_suppress_ctags_warning = 1
 
 
   " ----- majutsushi/tagbar settings -----
   " Uncomment to open tagbar automatically whenever possible
   "autocmd BufEnter * nested :call tagbar#autoopen(0)
+
+  " ----- 'ludovicchabant/vim-gutentags' -----
+  " crete tagfiles for brian2 generated projects
+  let g:gutentags_project_root = ['code_objects']
 
 
   " ----- airblade/vim-gitgutter settings -----
@@ -307,24 +409,59 @@ filetype off                  " required
   " ----- vim-python/python-syntax
   let g:python_highlight_all = 1
 
+  " ---- denisalevi/Vim-Jinja2-Syntax'
+  " turn on/off Jinja syntax highlighting and matchit support
+  let g:enable_jinja_matchit = 1
+  let g:enable_jinja_highlighting = 1
+
+  " ---- sjl/gundo.vim ----
+  " turn of autmatic diff preview (manual with r)
+  let g:gundo_auto_preview = 0
+
 " }}} Plugin-Specific Settings
 
 " ----- Keyboard Mappings {{{
-"
+
+  " Pydocstring
+  nmap <leader>z <Plug>(pydocstring)
+
+  " ----- jmcantrell/vim-diffchanges -----
+  " show the changes made to the saved file
+  nnoremap <leader>D :DiffChangesDiffToggle<CR>
+  "show the patch of the current changes
+  nnoremap <leader>S :DiffChangesPatchToggle<CR>
+
   " Syntax checking
   nnoremap <F7> :SyntasticCheck<CR>
 
   " Toggle undo tree (sjl/gundo)
   nnoremap <leader>u :GundoToggle<CR>
 
-  " Open/close NERDTree tabs
-  nmap <leader>t :NERDTreeTabsToggle<CR>
+  " Open/close NERDTree tabs (Mirror only opens Tree in current tab)
+  "nmap <leader>e :NERDTreeTabsToggle<CR>
+  nmap <leader>e :NERDTreeMirrorToggle<CR>
 
   " Open/close tagbar
-  nmap <leader>b :TagbarToggle<CR>
+  nmap <leader>r :TagbarToggle<CR>
 
   " Toggle relative line numbers
   nmap <silent> <leader>n :call ToggleNumber()<CR>
+
+  " Buffer navigation
+  " Close the current buffer and move to the most recently used
+  nmap <leader>d :bd<CR>
+"  " Buffer navigation
+"  " open buffer list for selection
+"  nnoremap <leader>b :ls<CR>:b<Space>
+"  " Move to the next buffer
+"  nmap <leader>n :bnext<CR>
+"  " Move to the previous buffer
+"  nmap <leader>h :bprev<CR>
+
+  " CtrlP mappings
+  nnoremap <leader>p :CtrlPBuffer<CR>
+  nnoremap <leader>P :CtrlPMRU<CR>
+  nnoremap <leader>t :CtrlPTag<CR>
 
   " Toggle paste / nopaste mode
   set pastetoggle=<F2>
@@ -332,8 +469,8 @@ filetype off                  " required
   " Update ctags
   augroup keybinding
     au!
-    autocmd FileType c,cpp              map <F8> :!/usr/bin/ctags -R --c++-kinds=+p --fields=+iaS --extra=+q .<CR>
-    autocmd FileType cuda               map <F8> :!/usr/bin/ctags -R --langmap=c++:+.cu --c++-kinds=+p --fields=+iaS --extra=+q .<CR>
+    autocmd FileType c,cpp,cuda         map <F8> :!/usr/bin/ctags -R --c++-kinds=+p --fields=+iaS --extra=+q .<CR>
+    "autocmd FileType cuda               map <F8> :!/usr/bin/ctags -R --langmap=c++:+.cu --c++-kinds=+p --fields=+iaS --extra=+q .<CR>
   augroup END
 
   " Switch btwn dark and light theme solarized
@@ -341,6 +478,20 @@ filetype off                  " required
 
   " Enable folding f
   nnoremap <leader>f za
+  " Code folding options
+  nmap <leader>0f :set foldlevel=0<CR>
+  nmap <leader>1f :set foldlevel=1<CR>
+  nmap <leader>2f :set foldlevel=2<CR>
+  nmap <leader>3f :set foldlevel=3<CR>
+  nmap <leader>4f :set foldlevel=4<CR>
+  nmap <leader>5f :set foldlevel=5<CR>
+  nmap <leader>6f :set foldlevel=6<CR>
+  nmap <leader>7f :set foldlevel=7<CR>
+  nmap <leader>8f :set foldlevel=8<CR>
+  nmap <leader>9f :set foldlevel=9<CR>
+
+  " Force write readonly files using sudo
+  command! Sw w !sudo tee %
 
   " Make these commonly mistyped commands still work
   command! WQ wq
@@ -348,12 +499,13 @@ filetype off                  " required
   command! Wqa wqa
   command! W w
   command! Q q
+  command! SW Sw
 
-  " Force write readonly files using sudo
-  command! Sw w !sudo tee %
+  " To clear hlsearch
+  nmap <leader>/ :nohlsearch<CR>
 
-  " Use :C to clear hlsearch
-  nmap <leader>h :nohlsearch<CR>
+  " run current script in python
+  nmap <leader>o :!python %<CR>
 
   " Make navigating long, wrapped lines behave like normal lines
   noremap <silent> k gk
@@ -422,6 +574,15 @@ filetype off                  " required
 ""    \ contains=@'.group
 ""  endfunction
 
+  " Profile vim
+  function! MyProf(file)
+    execute "profile start " . a:file
+    execute "profile func *"
+    execute "profile file *"
+  endfunc
+
+  command! -nargs=1 Prof call MyProf(<f-args>)
+
 " }}} Custom Functions
 
 " ----- Autocommands (indentation settings) {{{
@@ -434,14 +595,14 @@ filetype off                  " required
     "autocmd FileType python             set tabstop=4 softtabstop=4 shiftwidth=4 textwidth=79 smarttab expandtab autoindent fileformat=unix smartindent shiftround
     autocmd FileType make               set tabstop=8 shiftwidth=8 noexpandtab list
     autocmd FileType man                set tabstop=8 shiftwidth=8 noexpandtab
-    autocmd FileType c,cpp,cuda         set tabstop=4 shiftwidth=4 softtabstop=4 textwidth=79 expandtab
+    autocmd FileType c,cpp,cuda         set tabstop=4 shiftwidth=4 softtabstop=4 textwidth=79 expandtab nolist
     autocmd FileType tex                set tabstop=4 shiftwidth=4 textwidth=79 wrap expandtab spell spelllang=en iskeyword+=: tw=0 "linebreak
     "autocmd FileType tex                set makeprg=pdflatex\ \"%\"&&evince\ \"%<.pdf\"
     autocmd FileType vimwiki            set ts=2 sw=2 tw=78 wrap lbr et
     autocmd FileType vim,tmux           set ts=2 sw=2 expandtab
     autocmd FileType mail               set tw=72
     autocmd FileType gitcommit          set tw=72 sw=2 tabstop=2 et
-    autocmd FileType sh                 set tw=79 ts=2 softtabstop=2 shiftwidth=2 expandtab
+    autocmd FileType sh                 set tw=79 ts=4 softtabstop=4 shiftwidth=4 expandtab
   augroup misc
     au!
     autocmd BufNewFile,BufRead wscript* set filetype=python
@@ -499,4 +660,4 @@ filetype off                  " required
   "set colorcolumn=81
 " }}}
 
-" vim:foldmethod=marker:foldlevel=0
+" vim:foldmethod=marker
