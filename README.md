@@ -4,7 +4,7 @@ Use [thoughtbot/rcm](https://github.com/thoughtbot/rcm) for easy dotfile managem
 
 Clone into $HOME:
 ```
-git clone git@github.com:denisalevi/.dotfiles.git $HOME
+git clone git@github.com:denisalevi/.dotfiles.git $HOME/.dotfiles
 ```
 
 Create symlinks for all not host-specific dotfiles in `~/.dotfiles`:
