@@ -43,10 +43,13 @@ filetype off                  " required
   " show changes to saved file using vimdiff
   Plugin 'jmcantrell/vim-diffchanges'
   Plugin 'sjl/gundo.vim'
+  " Distraction-free writing mode
+  Plugin 'junegunn/goyo.vim'
 
   " ----- Working with Git ----------------------------------------------
   Plugin 'airblade/vim-gitgutter'
   Plugin 'tpope/vim-fugitive'
+  Plugin 'tpope/vim-rhubarb'
 
   " ---- Other stuff without own section --------------------------------
   Plugin 'Raimondi/delimitMate'
@@ -60,7 +63,7 @@ filetype off                  " required
   Plugin 'vim-python/python-syntax'
   Plugin 'denisalevi/vim-pydocstring'
   " Use either syntastic + flake8 isntalled or vim-flake8
-  Plugin 'vim-syntastic/syntastic'
+  "Plugin 'vim-syntastic/syntastic'
   " TODO: check out w0rp/ale for asynchronous checking
   "Plugin 'nvie/vim-flake8'
   "Plugin 'file:///home/denisalevi/git/Vim-Jinja2-Syntax-fork'
@@ -333,24 +336,24 @@ filetype off                  " required
   "let g:nerdtree_tabs_open_on_console_startup = 1
 
 
-  " ----- scrooloose/syntastic settings -----
-  let g:syntastic_error_symbol = '✘'
-  let g:syntastic_warning_symbol = "▲"
-  " Turn of automatic checking at write
-  "let g:syntastic_mode = "passive"
-  let g:syntastic_check_on_wq = 0
-  " make :lnext work after running check (might conflict with loc list plugins)
-  let g:syntastic_always_populate_loc_list = 1
-  augroup mySyntastic
-    au!
-    au FileType tex let b:syntastic_mode = "passive"
-  augroup END
-  " Use flake8 for python files
-  let g:syntastic_python_checkers = ['flake8']
-  " active filtypes are checked automatically at file writing
-  "let g:syntastic_mode_map = { 'mode': 'active',
-  "            \ 'active_filetypes': ['python'],
-  "            \ 'passive_filetypes': [] }
+"  " ----- scrooloose/syntastic settings -----
+"  let g:syntastic_error_symbol = '✘'
+"  let g:syntastic_warning_symbol = "▲"
+"  " Turn of automatic checking at write
+"  "let g:syntastic_mode = "passive"
+"  let g:syntastic_check_on_wq = 0
+"  " make :lnext work after running check (might conflict with loc list plugins)
+"  let g:syntastic_always_populate_loc_list = 1
+"  augroup mySyntastic
+"    au!
+"    au FileType tex let b:syntastic_mode = "passive"
+"  augroup END
+"  " Use flake8 for python files
+"  let g:syntastic_python_checkers = ['flake8']
+"  " active filtypes are checked automatically at file writing
+"  "let g:syntastic_mode_map = { 'mode': 'active',
+"  "            \ 'active_filetypes': ['python'],
+"  "            \ 'passive_filetypes': [] }
 
 
 "  " ----- xolox/vim-easytags settings -----
@@ -461,6 +464,9 @@ filetype off                  " required
   \'Citation %.%# undefined'
   let g:Tex_IgnoreLevel = 8
 
+  " don't go to error
+  let g:Tex_GotoError = 0
+
 " }}} Plugin-Specific Settings
 
 " ----- Keyboard Mappings {{{
@@ -475,7 +481,7 @@ filetype off                  " required
   nnoremap <leader>S :DiffChangesPatchToggle<CR>
 
   " Syntax checking
-  nnoremap <F7> :SyntasticCheck<CR>
+  "nnoremap <F7> :SyntasticCheck<CR>
 
   " Toggle undo tree (sjl/gundo)
   nnoremap <leader>u :GundoToggle<CR>

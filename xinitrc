@@ -59,7 +59,7 @@ eval $(/usr/bin/gnome-keyring-daemon --start --components=pkcs11,secrets,ssh)
 export SSH_AUTH_SOCK
 
 ## to use different window managers run
-## $ xinit i3 
+## $ xinit i3
 ## or
 ## $ startx ~/.xinitrc i3
 #session=${1:-awesome} # default awesome
@@ -67,6 +67,12 @@ export SSH_AUTH_SOCK
 #	awesome ) exec awesome;;
 #	i3	) exec i3;;
 #esac
+
+# adjust typematic delay and raate
+xset r rate 200 20
+
+setxkbmap -option ‘caps:ctrl_modifier’
+xcape -e ‘Caps_Lock=Escape’
 
 xbindkeys
 exec awesome

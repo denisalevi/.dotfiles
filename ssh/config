@@ -10,6 +10,12 @@ Host antares
 	ForwardX11 no
 	ForwardX11Trusted no
 
+Host antarestunnel
+	ProxyCommand ssh -q alioth nc -q0 antares 22
+	User denisalevi
+	ForwardX11 no
+	ForwardX11Trusted no
+
 Host meropetunnel
 	ProxyCommand ssh -q alioth nc -q0 merope 22
 	User denisalevi
@@ -55,5 +61,41 @@ Host eltanin
 Host eltanintunnel
 	Proxycommand ssh -q alioth nc -q0 eltanin 22
 	User denisalevi
+	ForwardX11 no
+	ForwardX11Trusted no
+
+Host adhara
+	HostName adhara.ni.tu-berlin.de
+	User denisalevi
+	ForwardX11 no
+	ForwardX11Trusted no
+
+Host adharatunnel
+	Proxycommand ssh -q alioth nc -q0 adhara 22
+	User denisalevi
+	ForwardX11 no
+	ForwardX11Trusted no
+
+Host risha
+	HostName risha.ni.tu-berlin.de
+	User denisalevi
+	ForwardX11 no
+	ForwardX11Trusted no
+
+Host rishatunnel
+	Proxycommand ssh -q alioth nc -q0 risha 22
+	User denisalevi
+	ForwardX11 no
+	ForwardX11Trusted no
+
+Host mkp
+	HostName mkp126.cognition.tu-berlin.de
+	User denis
+	ForwardX11 no
+	ForwardX11Trusted no
+
+Host mkpcluster
+	HostName master.ml.tu-berlin.de
+	User denis
 	ForwardX11 no
 	ForwardX11Trusted no

@@ -39,7 +39,7 @@
 
 ## Examples of commands:
 #
-#"xbindkeys_show" 
+#"xbindkeys_show"
 #  control+shift + q
 #
 ## set directly keycode (here control + f with my keyboard)
@@ -79,7 +79,7 @@
 
 # F4 mute microphone
  "amixer -D pulse set Capture toggle"
-    XF86AudioMicMute 
+    XF86AudioMicMute
 
 # F5 decrease backlight
  "xbacklight -dec 10"
@@ -88,6 +88,10 @@
 # F6 increase backlight
  "xbacklight -inc 10"
     XF86MonBrightnessUp
+
+# Fn + F12 hibernate
+ "systemctl hibernate"
+    XF86Explorer
 
 ##################################
 # End of xbindkeys configuration #

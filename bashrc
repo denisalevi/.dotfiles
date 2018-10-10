@@ -22,6 +22,9 @@ fi
 # update the values of LINES and COLUMNS.
 shopt -s checkwinsize
 
+# activate double star wildcard
+shopt -s globstar
+
 # enable color support of ls and also add handy aliases
 if [ "$TERM" != "dumb" ]; then
   #eval "`dircolors -b`"
@@ -104,18 +107,38 @@ vman() {
   fi
 }
 
+# if exists, source tmuxinator completion file
+[ -f ~/.tmuxinator.bash ] && . ~/.tmuxinator.bash
 
 #export PATH=$PATH:~/.local/bin
-# add anaconda to path
-export PATH=/opt/anaconda/bin:$PATH
+# add anaconda to path (without activate env, use system python)
+# (for default anaconda root python: set PATH=/opt/ana...:$PATH, but that
+# breaks powerline)
+#export PATH=$PATH:/opt/anaconda/bin
+# set alias to use anaconda root env python
+#alias condapython='/opt/anaconda/bin/python'
+. /opt/anaconda/etc/profile.d/conda.sh
 
+alias reset_caps="setxkbmap -option 'caps:ctrl_modifier' && xcape -e 'Caps_Lock=Escape'"
 alias make_all_non_executabe='for f in **/*; do if [[ -f "$f" && -x "$f" ]]; then chmod -x "$f"; ll "$f"; fi; done'
 alias print_ni="lp -d Kyocera_FS-4200DN"
 alias print_ni_color="lp -d Lexmark_CS310_Series"
 #alias dock_ni="xrandr --output eDP1 --auto --pos 1280x1200 --output DP2-2 --auto --pos 0x700 --output DP2-3 --auto --pos 1280x0"
 alias dock_ni="xrandr --output DP2-2 --right-of eDP1 --auto --output DP2-3 --right-of DP2-2 --auto"
 alias dock_ni_old="xrandr --output eDP1 --auto --pos 1280x900 --output DP2-2 --auto --pos 0x200 --output DP2-3 --auto --pos 1280x0"
-alias dock_home="xrandr --output eDP1 --auto --pos 1280x900 --output DP1 --auto --pos 0x200 --output DP2 --auto --pos 1280x0"
+#alias dock_mkp="xrandr --output DP2-1 --primary --pos 1920x540 --mode 2560x1440 --output DP2-2 --pos 4480x0 --rotate left --mode 2560x1440 --output eDP1 --pos 0x1700 --mode 1920x1080"
+alias dock_mkp="xrandr --output DP2-2 --primary --pos 1920x540 --mode 2560x1440 --output eDP1 --pos 0x1700 --mode 1920x1080"
+alias dock_mkp_rotate="xrandr --output DP2-2 --primary --pos 1920x540 --mode 2560x1440 --rotate left --output eDP1 --pos 0x1700 --mode 1920x1080"
+alias dock_mkp_rotate_resolution="xrandr --output DP2-2 --primary --pos 1920x540 --auto --rotate left --output eDP1 --pos 0x1700 --mode 1920x1080"
+#alias dock_mkp_old="xrandr --output DP2-1 --primary --pos 1920x540 --mode 2560x1440 --output eDP1 --pos 0x1700 --mode 1920x1080"
+#alias dock_home="xrandr --output eDP1 --auto --pos 1280x900 --output DP1 --auto --pos 0x200 --output DP2 --auto --pos 1280x0"
+
+function xrandr_above {
+    COMMAND="xrandr --output "$1" --above eDP1 --auto"
+    echo $COMMAND
+    `$COMMAND`
+}
+
 #alias tmux="TERM=screen-256color-bce tmux"
 alias lmake='latexmk -pdflatex=xelatex -pdf main.tex'
 alias lmakep='latexmk -pdflatex=xelated -pdf -pvc main.tex'
@@ -125,25 +148,69 @@ alias lpmake='latexmk -pdflatex=xelatex -pdf presentation.tex'
 alias jpy='jupyter notebook'
 alias tunnelMEROPE='ssh -f -N -T -L 1111:merope:22 -L 2345:merope:2345 denisalevi@alioth.ni.tu-berlin.de'
 alias tunnelELNATH='ssh -f -N -T -L 1111:elnath:22 -L 2345:merope:2345 denisalevi@alioth.ni.tu-berlin.de'
-alias mountantares='sudo sshfs -o allow_other,IdentityFile=~/.ssh/id_rsa denisalevi@alioth.ni.tu-berlin.de:/home/denisalevi/ /mnt/antares'
+alias tunnelMKP='ssh -f -N -L localhost:16006:localhost:6006 mkp'
+alias mountantares='sudo sshfs -o allow_other,IdentityFile=~/.ssh/id_rsa denisalevi@antares.ni.tu-berlin.de:/home/denisalevi/ /mnt/antares'
+alias mountantares_alioth='sudo sshfs -o allow_other,IdentityFile=~/.ssh/id_rsa denisalevi@alioth.ni.tu-berlin.de:/home/denisalevi/ /mnt/antares'
+alias mountantares_no_cache='sudo sshfs -o allow_other,IdentityFile=~/.ssh/id_rsa,cache=no denisalevi@alioth.ni.tu-berlin.de:/home/denisalevi/ /mnt/antares'
 alias mountantares_tunnel='sudo sshfs -o allow_other,IdentityFile=~/.ssh/id_rsa,port=1111 denisalevi@localhost:/home/denisalevi/ /mnt/antares'
+alias mountmkp='sudo sshfs -o allow_other,IdentityFile=~/.ssh/id_rsa denis@mkp126.cognition.tu-berlin.de:/home/denis/ /mnt/mkp'
 alias sync_b2c="rsync -avzhe ssh merope:/home/denisalevi/projects/dev_brian2cuda/brian2cuda_repo/ ~/projects/dev_brian2cuda/brian2cuda_repo/ --delete --exclude 'benchmarks' --exclude 'brian2cuda/tools' --exclude 'examples'"
 alias sync_b2c_tunnel="rsync -avzhe ssh meropetunnel:/home/denisalevi/projects/dev_brian2cuda/brian2cuda_repo/ ~/projects/dev_brian2cuda/brian2cuda_repo/ --delete --exclude 'benchmarks' --exclude 'brian2cuda/tools' --exclude 'examples'"
 alias sync_tests='rsync -avzhe ssh merope:/home/denisalevi/projects/dev_brian2cuda/python_test_networks/test_brian2_test_suite_tests/*.py ~/projects/dev_brian2cuda/python_test_networks/test_brian2_test_suite_tests/ && rsync -avzhe ssh merope:/home/denisalevi/projects/dev_brian2cuda/python_test_networks/test_feature_tests/*.py ~/projects/dev_brian2cuda/python_test_networks/test_feature_tests/ --delete'
 alias sync_tests_tunnel='rsync -avzhe ssh meropetunnel:/home/denisalevi/projects/dev_brian2cuda/python_test_networks/test_brian2_test_suite_tests/*.py ~/projects/dev_brian2cuda/python_test_networks/test_brian2_test_suite_tests/ && rsync -avzhe ssh meropetunnel:/home/denisalevi/projects/dev_brian2cuda/python_test_networks/test_feature_tests/*.py ~/projects/dev_brian2cuda/python_test_networks/test_feature_tests/ --delete'
+alias sync_mkp_pwd='scp -r mkp:$PWD/* $PWD'
 alias grip_tunnel='ssh -Y -N -f -L localhost:6419:localhost:6419 alioth'
 alias grip_tunnel_kill='grip_pid=$(pgrep -f "ssh -Y -N -f -L localhost:6419:localhost:6419 alioth") \
                             && if [ ! -z "$grip_pid" ]; then kill -s 9 $grip_pid; fi'
 alias grip_tunnel_reset='grip_tunnel_kill && grip_tunnel'
+alias jupyter_tunnel'=ssh -N -f -L localhost:8889:localhost:8889 alioth'
+alias fix_caps="python -c 'from ctypes import *; X11 = cdll.LoadLibrary("libX11.so.6"); display = X11.XOpenDisplay(None); X11.XkbLockModifiers(display, c_uint(0x0100), c_uint(2), c_uint(0)); X11.XCloseDisplay(display)'' && source ~/.bash_profile"
+#alias bccn_proxy="ssh -D 1234 denis@deighton.bccn-berlin.de"
+alias bccn_proxy="ssh -f -N -T -D 3124 denis@deighton.bccn-berlin.de"
+
+alias vim_b2c_mnt='cd /mnt/antares/projects/dev_brian2cuda/brian2cuda_repo \
+    && vim -c "set path+=frozen_repos/brian2" \
+    brian2cuda/**/*.py brian2cuda/templates/*.cu brian2cuda/brianlib/*.h'
+alias vim_b2c='cd ~/projects/dev_brian2cuda/brian2cuda_repo \
+    && vim -c "set path+=frozen_repos/brian2" \
+    brian2cuda/**/*.py brian2cuda/templates/*.cu brian2cuda/brianlib/*.h'
+alias vim_brian='cd \
+    ~/projects/dev_brian2cuda/brian2cuda_repo/frozen_repos/brian2 \
+    && vim brian2/devices/**/*.py \
+    brian2/devices/cpp_standalone/templates/*.cpp \
+    brian2/devices/cpp_standalone/brianlib/*.h'
+alias py3='conda activate py3'
+alias tfa='conda activate tf'
+alias touchpadOff='synclient TouchpadOff=1'
+alias touchpadOn='synclient TouchpadOff=0'
+alias setclip="xclip -selection c"
+alias getclip="xclip -selection c -o"
+alias dp='dptrp1 --client-id ~/.dptrp1/client_id --key ~/.dptrp1/key'
+
+function dp_to_mendeley {
+    if [ "$#" -ne 1 ]; then
+        echo "ERROR: dp_to_mendeley takes exactly one argument (file name), got $# instead"
+    else
+        echo "Uploading $1 ..."
+        dp upload "$1" "Document/Mendeley/$1"
+        echo "... done"
+    fi
+}
+
+function dp_del_from_mendeley {
+    if [ "$#" -ne 1 ]; then
+        echo "ERROR: dp_del_from_mendeley takes exactly one argument (file name), got $# instead"
+    else
+        echo "Deleting $1 ..."
+        dp delete "Document/Mendeley/$1"
+        echo "... done"
+    fi
+}
+
+#alias vim='vim --servername vim'
 
 
 #stty stop undef # to unmap ctrl-s for vim-ipython
 
 # local custom binaries
 #export PATH=$PATH:"/.local/bin"
-
-## make caps ESC and CTRL at once
-setxkbmap -option 'caps:ctrl_modifier'
-#xcape -t 200 -e 'Caps_Lock=Escape'
-xcape -e 'Caps_Lock=Escape'
-
