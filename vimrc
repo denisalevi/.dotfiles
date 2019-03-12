@@ -45,6 +45,8 @@ filetype off                  " required
   Plugin 'sjl/gundo.vim'
   " Distraction-free writing mode
   Plugin 'junegunn/goyo.vim'
+  Plugin 'junegunn/limelight.vim'
+  Plugin 'rhysd/vim-grammarous'
 
   " ----- Working with Git ----------------------------------------------
   Plugin 'airblade/vim-gitgutter'
@@ -52,6 +54,7 @@ filetype off                  " required
   Plugin 'tpope/vim-rhubarb'
 
   " ---- Other stuff without own section --------------------------------
+  Plugin 'embear/vim-localvimrc'
   Plugin 'Raimondi/delimitMate'
   "Plugin 'tomtom/tinykeymap_vim'
 
@@ -156,6 +159,12 @@ filetype off                  " required
   " in the sign column.
   hi clear SignColumn
 
+  " Set latex filetype to `latex` instead of `plaintex` by default
+  let g:tex_flavor = "latex"
+
+  " needed for vim-latex reverse search?
+  set grepprg=grep\ -nH\ $*
+
   "Make code pretty
   " Uncomment if not using vim-python/python-syntax plugin
   "let python_highlight_all = 1
@@ -248,8 +257,26 @@ filetype off                  " required
   "let g:solarized_termcolors=256
 
   " needs to be set after colorscheme (which resets SpellBad)
-  hi clear SpellBad
-  hi SpellBad cterm=bold,underline ctermfg=red
+  function! SetSpell()
+    hi clear SpellBad
+    hi SpellBad cterm=bold,underline ctermfg=red
+  endfunction
+
+  nmap <leader>s :call SetSpell()<CR>
+
+
+  " ----- rhysd/vim-grammarous -----
+  nmap <leader>wn <Plug>(grammarous-move-to-next-error)
+  nmap <leader>wp <Plug>(grammarous-move-to-previous-error)
+  nmap <leader>wf <Plug>(grammarous-fixit)
+  nmap <leader>wa <Plug>(grammarous-fixall)
+  nmap <leader>wo <Plug>(grammarous-open-info-window)
+  nmap <leader>wq <Plug>(grammarous-close-info-window)
+  nmap <leader>wi <Plug>(grammarous-move-to-info-window)
+  nmap <leader>wr <Plug>(grammarous-remove-error)
+  nmap <leader>wR <Plug>(grammarous-disable-rule)
+  nmap <leader>wx <Plug>(grammarous-reset)
+
 
   " ----- bling/vim-airline and vim-bufferline settings -----
   " Always show statusbar
@@ -325,6 +352,36 @@ filetype off                  " required
   nnoremap <silent> <Leader><S-UP> :BuffergatorMruCycleNext leftabove sbuffer<CR>
   nnoremap <silent> <Leader><S-RIGHT> :BuffergatorMruCycleNext rightbelow vert sbuffer<CR>
   nnoremap <silent> <Leader><S-DOWN> :BuffergatorMruCycleNext rightbelow sbuffer<CR>
+
+  " ----- junegunn/goyo.vim ----
+  let g:goyo_width = 80
+  nmap <silent> <Leader>g :Goyo<CR>
+
+  " ----- junegunn/limelight.vim ----
+  "  https://github.com/junegunn/limelight.vim/issues/27
+  " Number of preceding/following paragraphs to include (default: 0)
+  let g:limelight_paragraph_span = 0
+
+  function! SetLimelightCtermfg()
+    if &background == "dark"
+      let g:limelight_conceal_ctermfg = 0  " from gnome terminal 16 colors
+    else
+      let g:limelight_conceal_ctermfg = 7
+    endif
+  endfunction
+
+  call SetLimelightCtermfg()
+
+  " not working?
+  "function! ToggleLimlight()
+  "  call SetLimelightCtermfg()
+  "  Limelight!!
+  "endfunction
+
+  nmap <silent> <Leader>L :call SetLimelightCtermfg() <bar> Limelight!!<CR>
+  " Link limelight to goyo mode
+  autocmd! User GoyoEnter Limelight
+  autocmd! User GoyoLeave Limelight!
 
   " ----- scrooloose/nerdtree -----
   "hide .pyc files in NERDTree
@@ -427,14 +484,19 @@ filetype off                  " required
 
   " ---- vim-latex/vim-latex -----
   "  " Default compiling format
-  let g:Tex_DefaultTargetFormat='pdf'
+  let g:Tex_DefaultTargetFormat = 'pdf'
+  let g:Tex_MultipleCompileFormats = 'pdf'
 
   " Never Forget, To set the default viewer:: Very Important
   let g:Tex_ViewRule_pdf = 'zathura'
 
   " Trying to add same for pdfs, hoping that package SynTex is installed
   "let g:Tex_CompileRule_dvi = 'latex -src-specials -interaction=nonstopmode $*'
-  let g:Tex_CompileRule_pdf = 'pdflatex -synctex=1 -interaction=nonstopmode $*'
+  "let g:Tex_CompileRule_pdf = 'pdflatex -synctex=1 -interaction=nonstopmode $*'
+  "let g:Tex_CompileRule_pdf = "latexmk -pdflatex='pdflatex -file-line-error -synctex=1 -interaction=nonstopmode' -bibtex -pdf $*"
+  " lmake is an alias defined in ~/.bashrc
+  let g:Tex_CompileRule_pdf = "latexmk -pdflatex=\"pdflatex -file-line-error -synctex=1 -interaction=nonstopmode\" -bibtex -pdf $*"
+  "let g:Tex_CompileRule_pdf = 'latexmk -pdflatex=xelatex -synctex=1 -interaction=nonstopmode $*'
 
   " Get the correct servername, which should be the filename of the tex file,
   " without the extension.
@@ -447,11 +509,14 @@ filetype off                  " required
 
   " Forward search
   " syntax for zathura: zathura --synctex-forward 193:1:paper.tex paper.pdf
+  " does not seem to work -> but <leader>ls does!
   function! SyncTexForward()
           let execstr = 'silent! !zathura --synctex-forward '.line('.').':1:"'.expand('%').'" "'.expand("%:p:r").'".pdf'
           execute execstr
   endfunction
   nmap <leader>lf :call SyncTexForward()<CR>
+
+  "nmap <leader>lm :!latexmk -pdflatex=xelatex -pdf -synctex=1 -interaction=nonstopmode main.tex<CR>
 
   let g:Tex_IgnoredWarnings =
   \'Underfull'."\n".
@@ -467,9 +532,17 @@ filetype off                  " required
   " don't go to error
   let g:Tex_GotoError = 0
 
+  " activate Alt key shortcuts
+  "let g:Tex_AdvancedMath = 1
+
+  nnoremap \q (j>>gq)
+
 " }}} Plugin-Specific Settings
 
 " ----- Keyboard Mappings {{{
+
+  " search visually selected text
+  vnoremap // y/\V<C-r>=escape(@",'/\')<CR><CR>
 
   " Pydocstring
   nmap <leader>z <Plug>(pydocstring)
@@ -527,6 +600,7 @@ filetype off                  " required
   augroup END
 
   " Switch btwn dark and light theme solarized
+  " (F5 already does that)
   call togglebg#map("<F9>")
 
   " Enable folding f
@@ -652,7 +726,8 @@ filetype off                  " required
     autocmd FileType make               set tabstop=8 shiftwidth=8 noexpandtab list
     autocmd FileType man                set tabstop=8 shiftwidth=8 noexpandtab
     autocmd FileType c,cpp,cuda         set tabstop=4 shiftwidth=4 softtabstop=4 textwidth=79 expandtab nolist
-    autocmd FileType tex                set tabstop=2 shiftwidth=2 textwidth=79 wrap expandtab spell spelllang=en iskeyword+=: "linebreak
+    autocmd FileType tex                set tabstop=2 shiftwidth=2 textwidth=79 wrap expandtab spell spelllang=en_us iskeyword+=: "linebreak
+    autocmd FileType plaintex,tex,latex syntax spell toplevel
     "autocmd FileType tex                set makeprg=pdflatex\ \"%\"&&evince\ \"%<.pdf\"
     autocmd FileType vimwiki            set ts=2 sw=2 tw=78 wrap lbr et
     autocmd FileType vim,tmux           set ts=2 sw=2 expandtab

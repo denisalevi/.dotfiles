@@ -120,6 +120,8 @@ vman() {
 . /opt/anaconda/etc/profile.d/conda.sh
 
 alias reset_caps="setxkbmap -option 'caps:ctrl_modifier' && xcape -e 'Caps_Lock=Escape'"
+alias lang_de="setxkbmap de -option 'caps:ctrl_modifier' && xcape -e 'Caps_Lock=Escape'"
+alias lang_us="setxkbmap us -option 'caps:ctrl_modifier' && xcape -e 'Caps_Lock=Escape'"
 alias make_all_non_executabe='for f in **/*; do if [[ -f "$f" && -x "$f" ]]; then chmod -x "$f"; ll "$f"; fi; done'
 alias print_ni="lp -d Kyocera_FS-4200DN"
 alias print_ni_color="lp -d Lexmark_CS310_Series"
@@ -140,8 +142,12 @@ function xrandr_above {
 }
 
 #alias tmux="TERM=screen-256color-bce tmux"
-alias lmake='latexmk -pdflatex=xelatex -pdf main.tex'
-alias lmakep='latexmk -pdflatex=xelated -pdf -pvc main.tex'
+#alias lmake='latexmk -pdflatex=xelatex -pdf main.tex'
+alias lmake='latexmk -pdflatex="pdflatex -file-line-error -shell-escape -synctex=1 -interaction=nonstopmode" -bibtex -pdf'
+alias lmakeext='latexmk -pdflatex="pdflatex " -bibtex -pdf'
+alias lmakep='lmake -pvc'
+alias lmakelua='latexmk -lualatex -bibtex -pdf'
+alias lmakeluap='lmakelua -pvc'
 alias lc='latexmk -c'
 alias lC='latexmk -C'
 alias lpmake='latexmk -pdflatex=xelatex -pdf presentation.tex'
@@ -149,16 +155,33 @@ alias jpy='jupyter notebook'
 alias tunnelMEROPE='ssh -f -N -T -L 1111:merope:22 -L 2345:merope:2345 denisalevi@alioth.ni.tu-berlin.de'
 alias tunnelELNATH='ssh -f -N -T -L 1111:elnath:22 -L 2345:merope:2345 denisalevi@alioth.ni.tu-berlin.de'
 alias tunnelMKP='ssh -f -N -L localhost:16006:localhost:6006 mkp'
-alias mountantares='sudo sshfs -o allow_other,IdentityFile=~/.ssh/id_rsa denisalevi@antares.ni.tu-berlin.de:/home/denisalevi/ /mnt/antares'
+alias tunnelVNC='ssh -f -N -L localhost:26006:localhost:6006 vnc'
+alias mountantares='sudo sshfs \
+    -o allow_other,IdentityFile=~/.ssh/id_rsa \
+    denisalevi@antares.ni.tu-berlin.de:/home/denisalevi/ /mnt/antares'
 alias mountantares_alioth='sudo sshfs -o allow_other,IdentityFile=~/.ssh/id_rsa denisalevi@alioth.ni.tu-berlin.de:/home/denisalevi/ /mnt/antares'
 alias mountantares_no_cache='sudo sshfs -o allow_other,IdentityFile=~/.ssh/id_rsa,cache=no denisalevi@alioth.ni.tu-berlin.de:/home/denisalevi/ /mnt/antares'
 alias mountantares_tunnel='sudo sshfs -o allow_other,IdentityFile=~/.ssh/id_rsa,port=1111 denisalevi@localhost:/home/denisalevi/ /mnt/antares'
-alias mountmkp='sudo sshfs -o allow_other,IdentityFile=~/.ssh/id_rsa denis@mkp126.cognition.tu-berlin.de:/home/denis/ /mnt/mkp'
+alias mountmkp='sudo sshfs \
+    -o reconnect,ServerAliveInterval=15,ServerAliveCountMax=3,allow_other,IdentityFile=~/.ssh/id_rsa \
+    denis@mkp126.cognition.tu-berlin.de:/home/denis/ /mnt/mkp'
+alias mountvnc='sudo sshfs \
+    -o reconnect,ServerAliveInterval=15,ServerAliveCountMax=3,allow_other,IdentityFile=~/.ssh/id_rsa \
+    denis@master.ml.tu-berlin.de:/cognition/home/denis/ /mnt/vnc'
+alias mountvnc_workaround='sudo sshfs \
+    -o workaround=all,reconnect,ServerAliveInterval=15,ServerAliveCountMax=3,allow_other,IdentityFile=~/.ssh/id_rsa \
+    denis@master.ml.tu-berlin.de:/cognition/home/denis/ /mnt/vnc'
 alias sync_b2c="rsync -avzhe ssh merope:/home/denisalevi/projects/dev_brian2cuda/brian2cuda_repo/ ~/projects/dev_brian2cuda/brian2cuda_repo/ --delete --exclude 'benchmarks' --exclude 'brian2cuda/tools' --exclude 'examples'"
 alias sync_b2c_tunnel="rsync -avzhe ssh meropetunnel:/home/denisalevi/projects/dev_brian2cuda/brian2cuda_repo/ ~/projects/dev_brian2cuda/brian2cuda_repo/ --delete --exclude 'benchmarks' --exclude 'brian2cuda/tools' --exclude 'examples'"
 alias sync_tests='rsync -avzhe ssh merope:/home/denisalevi/projects/dev_brian2cuda/python_test_networks/test_brian2_test_suite_tests/*.py ~/projects/dev_brian2cuda/python_test_networks/test_brian2_test_suite_tests/ && rsync -avzhe ssh merope:/home/denisalevi/projects/dev_brian2cuda/python_test_networks/test_feature_tests/*.py ~/projects/dev_brian2cuda/python_test_networks/test_feature_tests/ --delete'
 alias sync_tests_tunnel='rsync -avzhe ssh meropetunnel:/home/denisalevi/projects/dev_brian2cuda/python_test_networks/test_brian2_test_suite_tests/*.py ~/projects/dev_brian2cuda/python_test_networks/test_brian2_test_suite_tests/ && rsync -avzhe ssh meropetunnel:/home/denisalevi/projects/dev_brian2cuda/python_test_networks/test_feature_tests/*.py ~/projects/dev_brian2cuda/python_test_networks/test_feature_tests/ --delete'
 alias sync_mkp_pwd='scp -r mkp:$PWD/* $PWD'
+alias sync_mkp_shortcut='rsync -zarv --include="*/" --include="*.py" --exclude="*" \
+    mkp:~/projects/memory_consolidation/shortcut_consolidation_model/shortcut_consolidation/ \
+    ~/projects/memory_consolidation/shortcut_consolidation_model/shortcut_consolidation/ && \
+    rsync -zarv --include="*/" --include="*.py" --exclude="*" \
+    mkp:~/projects/memory_consolidation/shortcut_consolidation_model/experiments/ \
+    ~/projects/memory_consolidation/shortcut_consolidation_model/experiments/'
 alias grip_tunnel='ssh -Y -N -f -L localhost:6419:localhost:6419 alioth'
 alias grip_tunnel_kill='grip_pid=$(pgrep -f "ssh -Y -N -f -L localhost:6419:localhost:6419 alioth") \
                             && if [ ! -z "$grip_pid" ]; then kill -s 9 $grip_pid; fi'
@@ -166,8 +189,10 @@ alias grip_tunnel_reset='grip_tunnel_kill && grip_tunnel'
 alias jupyter_tunnel'=ssh -N -f -L localhost:8889:localhost:8889 alioth'
 alias fix_caps="python -c 'from ctypes import *; X11 = cdll.LoadLibrary("libX11.so.6"); display = X11.XOpenDisplay(None); X11.XkbLockModifiers(display, c_uint(0x0100), c_uint(2), c_uint(0)); X11.XCloseDisplay(display)'' && source ~/.bash_profile"
 #alias bccn_proxy="ssh -D 1234 denis@deighton.bccn-berlin.de"
-alias bccn_proxy="ssh -f -N -T -D 3124 denis@deighton.bccn-berlin.de"
+alias bccn_proxy="ssh -f -N -T -D 3125 denis@deighton.bccn-berlin.de"
 
+alias vim_thesis='cd ~/projects/memory_consolidation/latex/masters_thesis \
+    && vim -c "set path=./" main.tex tex/*.tex'
 alias vim_b2c_mnt='cd /mnt/antares/projects/dev_brian2cuda/brian2cuda_repo \
     && vim -c "set path+=frozen_repos/brian2" \
     brian2cuda/**/*.py brian2cuda/templates/*.cu brian2cuda/brianlib/*.h'
@@ -179,6 +204,14 @@ alias vim_brian='cd \
     && vim brian2/devices/**/*.py \
     brian2/devices/cpp_standalone/templates/*.cpp \
     brian2/devices/cpp_standalone/brianlib/*.h'
+alias vim_brian_mnt='cd \
+    /mnt/antares/projects/dev_brian2cuda/brian2cuda_repo/frozen_repos/brian2 \
+    && vim brian2/devices/**/*.py \
+    brian2/devices/cpp_standalone/templates/*.cpp \
+    brian2/devices/cpp_standalone/brianlib/*.h'
+alias vim_b2g_mnt='cd \
+    /mnt/antares/projects/dev_brian2cuda/brian2cuda_repo/frozen_repos/brian2genn \
+    && vim brian2genn/**/*.py brian2genn/templates/*.cu brian2genn/b2glib/*.h'
 alias py3='conda activate py3'
 alias tfa='conda activate tf'
 alias touchpadOff='synclient TouchpadOff=1'
@@ -186,6 +219,8 @@ alias touchpadOn='synclient TouchpadOff=0'
 alias setclip="xclip -selection c"
 alias getclip="xclip -selection c -o"
 alias dp='dptrp1 --client-id ~/.dptrp1/client_id --key ~/.dptrp1/key'
+alias cd_palimpsest='cd ~/projects/memory_consolidation/shortcut_consolidation_model/experiments/episodic_to_semantic/denoising_autoencoder/data_vnc/'
+alias impress='impressive -T0 -w'
 
 function dp_to_mendeley {
     if [ "$#" -ne 1 ]; then

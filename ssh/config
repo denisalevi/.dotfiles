@@ -94,8 +94,14 @@ Host mkp
 	ForwardX11 no
 	ForwardX11Trusted no
 
-Host mkpcluster
+Host vnc
 	HostName master.ml.tu-berlin.de
+	User denis
+	ForwardX11 no
+	ForwardX11Trusted no
+
+Host deighton
+	HostName deighton.bccn-berlin.de
 	User denis
 	ForwardX11 no
 	ForwardX11Trusted no
