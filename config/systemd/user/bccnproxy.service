@@ -1,0 +1,15 @@
+[Unit]
+Description=Setup a secure ssh proxy to deighton (BCCN server)
+After=network-online.target
+
+[Service]
+# Using ssh-agent example
+#Environment=SSH_AUTH_SOCK=%h/.ssh/ssh-agent.sock
+ExecStart=/usr/bin/ssh -D 3124 deighton
+
+# Restart every >2 seconds to avoid StartLimitInterval failure
+RestartSec=5
+Restart=always
+
+[Install]
+WantedBy=default.target
